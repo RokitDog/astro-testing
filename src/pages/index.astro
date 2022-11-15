@@ -1,11 +1,24 @@
 ---
+import LatestAnime from '../components/LatestAnime'
 import Layout from '../layouts/Layout.astro'
-import Counter from '../components/Counter'
+
+const getRecentAnime = async (pageNumber: String) => {
+    const response = await fetch(
+        `https://gogoanime.consumet.org/recent-release?page=${pageNumber}`
+    )
+    return await response.json()
+}
+
+const recentAnimeData = await getRecentAnime('1')
+const recentAnimeData2 = await getRecentAnime('2')
 ---
 
-<Layout title="Welcome">
-    <main class="h-screen w-screen flex flex-col justify-center items-center">
-        <h1 class="text-4xl mb-16">Astro Counter Testing</h1>
-        <Counter client:load />
-    </main>
+<Layout title="Anime Site">
+    <div>
+        <LatestAnime
+            recentAnimeData1={recentAnimeData}
+            recentAnimeData2={recentAnimeData2}
+            client:load
+        />
+    </div>
 </Layout>

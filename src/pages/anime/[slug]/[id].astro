@@ -1,0 +1,52 @@
+---
+import CurentEpisode from '../../../components/CurentEpisode'
+import Pagination from '../../../components/Pagination'
+import Layout from '../../../layouts/Layout.astro'
+
+const { slug: name, id: episode } = Astro.params
+
+const fetchEpisode = async (name: string, episode: string) => {
+    const data = await fetch(
+        `https://gogoanime.consumet.org/vidcdn/watch/${name}-episode-${episode}`
+    )
+    return data.json()
+}
+
+const fetchAnimeDetails = async (name: string) => {
+    const data = await fetch(
+        `https://gogoanime.consumet.org/anime-details/${name}`
+    )
+    return data.json()
+}
+
+const getPopularAnime = async () => {
+    const response = await fetch(
+        'https://gogoanime.consumet.org/top-airing?page=1'
+    )
+    return response.json()
+}
+const slug = name.toString()
+const id = episode.toString()
+
+const currentEpisode = await fetchEpisode(slug, id)
+const animeDetails = await fetchAnimeDetails(slug)
+---
+
+<Layout title={slug}>
+    <div>
+        <CurentEpisode
+            slug={slug}
+            searchParams={id}
+            link1={currentEpisode.sources[0].file}
+            link2={currentEpisode.sources_bk[0].file}
+            client:load
+        />
+
+        <Pagination
+            client:idle
+            fetchAnimeDetails={animeDetails}
+            slug={slug}
+            params={id}
+        />
+    </div>
+</Layout>
